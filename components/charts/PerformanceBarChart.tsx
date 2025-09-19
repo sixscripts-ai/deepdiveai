@@ -1,9 +1,6 @@
 import React from 'react';
 import { TimeOfDayData, WeekdayData } from '../../types';
-
-// Since we are loading Recharts from a CDN, we need to declare the components we use
-// for TypeScript to recognize them, as they will be globally available at runtime on the `Recharts` object.
-declare const Recharts: any;
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 interface PerformanceBarChartProps {
   data: (TimeOfDayData | WeekdayData)[];
@@ -25,7 +22,6 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const PerformanceBarChart: React.FC<PerformanceBarChartProps> = ({ data, dataKey }) => {
-  const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } = Recharts;
 
   return (
     <div style={{ width: '100%', height: 300 }} className="my-6 font-sans">

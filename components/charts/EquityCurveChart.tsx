@@ -1,7 +1,6 @@
 import React from 'react';
 import { EquityCurveDataPoint } from '../../types';
-
-declare const Recharts: any;
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 interface EquityCurveChartProps {
   data: EquityCurveDataPoint[];
@@ -20,7 +19,6 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const EquityCurveChart: React.FC<EquityCurveChartProps> = ({ data }) => {
-  const { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } = Recharts;
 
   return (
     <div style={{ width: '100%', height: 300 }} className="my-6 font-sans">
