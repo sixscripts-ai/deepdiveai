@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import type { UploadedFile } from '../types';
 import { UploadCloudIcon } from './icons/Icons';
 
@@ -99,4 +99,4 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
   );
 };
 
-export default FileUpload;
+export default memo(FileUpload);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { TimeOfDayData, WeekdayData } from '../../types';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
@@ -10,11 +10,15 @@ interface PerformanceBarChartProps {
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
+    const value = payload[0].value;
+    const formattedValue = typeof value === 'number' ? value.toFixed(2) : 'N/A';
+    const tradeCount = payload[0].payload.tradeCount || 0;
+    
     return (
       <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 p-3 rounded-md shadow-lg text-sm">
         <p className="label font-semibold text-gray-200">{`${label}`}</p>
-        <p className="intro text-cyan-400">{`Net PnL: ${payload[0].value.toFixed(2)}`}</p>
-        <p className="desc text-gray-400">{`Trade Count: ${payload[0].payload.tradeCount}`}</p>
+        <p className="intro text-cyan-400">{`Net PnL: ${formattedValue}`}</p>
+        <p className="desc text-gray-400">{`Trade Count: ${tradeCount}`}</p>
       </div>
     );
   }
@@ -50,4 +54,4 @@ const PerformanceBarChart: React.FC<PerformanceBarChartProps> = ({ data, dataKey
   );
 };
 
-export default PerformanceBarChart;
+export default memo(PerformanceBarChart);

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, memo } from 'react';
 import type { ChatMessage } from '../types';
 import { BrainCircuitIcon, SendIcon, LightbulbIcon } from './icons/Icons';
 
@@ -121,4 +121,4 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
   );
 };
 
-export default ChatInterface;
+export default memo(ChatInterface);

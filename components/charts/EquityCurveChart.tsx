@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { EquityCurveDataPoint } from '../../types';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
@@ -8,10 +8,13 @@ interface EquityCurveChartProps {
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
+    const value = payload[0].value;
+    const formattedValue = typeof value === 'number' ? value.toFixed(2) : 'N/A';
+    
     return (
       <div className="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 p-3 rounded-md shadow-lg text-sm">
         <p className="label font-semibold text-gray-200">{`Trade #${label}`}</p>
-        <p className="intro text-cyan-400">{`Cumulative PnL: ${payload[0].value.toFixed(2)}`}</p>
+        <p className="intro text-cyan-400">{`Cumulative PnL: ${formattedValue}`}</p>
       </div>
     );
   }
@@ -50,4 +53,4 @@ const EquityCurveChart: React.FC<EquityCurveChartProps> = ({ data }) => {
   );
 };
 
-export default EquityCurveChart;
+export default memo(EquityCurveChart);

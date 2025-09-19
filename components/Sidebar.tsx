@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { UploadedFile } from '../types';
 import { getFileIcon } from './icons/FileIcons';
 import { DeleteIcon, LogoIcon } from './icons/Icons';
@@ -62,4 +62,4 @@ const Sidebar: React.FC<SidebarProps> = ({ files, selectedFile, onFileSelect, on
   );
 };
 
-export default Sidebar;
+export default memo(Sidebar);

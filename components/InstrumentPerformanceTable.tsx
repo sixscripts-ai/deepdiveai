@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, memo } from 'react';
 import { InstrumentPerformanceData } from '../types';
 import { ArrowUpIcon, ArrowDownIcon } from './icons/Icons';
 
@@ -66,6 +66,12 @@ const InstrumentPerformanceTable: React.FC<InstrumentPerformanceTableProps> = ({
         return <span className={color}>{pnl.toFixed(2)}</span>;
     };
 
+    const formatNumber = (value: any, decimals: number = 2): string => {
+        if (value === null || value === undefined) return 'N/A';
+        const num = typeof value === 'number' ? value : parseFloat(value);
+        return isNaN(num) ? 'N/A' : num.toFixed(decimals);
+    };
+
     return (
         <div className="overflow-x-auto my-6 rounded-lg border border-gray-700/50">
             <table className="w-full text-left">
@@ -83,9 +89,9 @@ const InstrumentPerformanceTable: React.FC<InstrumentPerformanceTableProps> = ({
                         <tr key={index} className="border-t border-gray-800/80 hover:bg-gray-800/40">
                             <td className="p-3 text-sm font-medium text-gray-100">{row.instrument}</td>
                             <td className="p-3 text-sm font-mono">{formatPnl(row.netPnl)}</td>
-                            <td className="p-3 text-sm text-gray-300">{row.winRate.toFixed(2)}%</td>
-                            <td className="p-3 text-sm text-gray-300">{row.totalTrades}</td>
-                            <td className="p-3 text-sm text-gray-300">{row.profitFactor.toFixed(2)}</td>
+                            <td className="p-3 text-sm text-gray-300">{formatNumber(row.winRate)}%</td>
+                            <td className="p-3 text-sm text-gray-300">{row.totalTrades || 0}</td>
+                            <td className="p-3 text-sm text-gray-300">{formatNumber(row.profitFactor)}</td>
                         </tr>
                     ))}
                 </tbody>
@@ -94,4 +100,4 @@ const InstrumentPerformanceTable: React.FC<InstrumentPerformanceTableProps> = ({
     );
 };
 
-export default InstrumentPerformanceTable;
+export default memo(InstrumentPerformanceTable);

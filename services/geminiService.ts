@@ -1,7 +1,7 @@
 import { GoogleGenAI, GenerateContentResponse, Content } from "@google/genai";
-import type { UploadedFile, ChatMessage, AnalysisResult, ChartData } from "../types";
+import type { UploadedFile, ChatMessage, AnalysisResult } from "../types";
 
-const API_KEY = import.meta.env.GEMINI_API_KEY || process.env.API_KEY;
+const API_KEY = process.env.GEMINI_API_KEY || process.env.API_KEY;
 
 if (!API_KEY) {
   throw new Error("GEMINI_API_KEY environment variable not set");
@@ -99,7 +99,7 @@ export const analyzeTradingData = async (file: UploadedFile): Promise<AnalysisRe
             }
         });
         
-        const rawText = response.text.trim();
+        const rawText = response.text?.trim() || "";
         
         try {
             const parsedJson = JSON.parse(rawText);
