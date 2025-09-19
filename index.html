@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deep Dive Trading Performance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              mono: ['Roboto Mono', 'monospace'],
+            },
+            colors: {
+              'gray': {
+                950: '#09090b',
+                900: '#18181b',
+                800: '#27272a',
+                700: '#3f3f46',
+                600: '#52525b',
+                500: '#71717a',
+                400: '#a1a1aa',
+                300: '#d4d4d8',
+                200: '#e4e4e7',
+                100: '#f4f4f5',
+              },
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      body {
+        background-color: #09090b;
+        background-image:
+          linear-gradient(rgba(24, 24, 27, 0.8), rgba(24, 24, 27, 0.8)),
+          radial-gradient(circle at 25% 25%, #1e40af30, transparent 40%),
+          radial-gradient(circle at 75% 75%, #0891b230, transparent 40%);
+      }
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: rgba(39, 39, 42, 0.5);
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #52525b;
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #71717a;
+      }
+       /* Custom text selection */
+      ::selection {
+        background-color: #0891b2; /* cyan-600 */
+        color: #f4f4f5; /* gray-100 */
+      }
+      /* Metric Tooltip Styles */
+      .metric-tooltip {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+      }
+      .metric-tooltip .tooltip-text {
+        visibility: hidden;
+        width: 260px;
+        background-color: #27272a; /* gray-800 */
+        color: #e4e4e7; /* gray-200 */
+        text-align: left;
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+        border-radius: 8px;
+        padding: 8px 12px;
+        position: absolute;
+        z-index: 10;
+        bottom: 140%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+        font-size: 13px;
+        line-height: 1.5;
+        border: 1px solid #3f3f46; /* gray-700 */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        pointer-events: none;
+      }
+      .metric-tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body class="text-gray-100">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoVBL5gI9kLmbG0CsdTCSFjDCMLMYQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYM6ucIFoTjsikqNAQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+  </body>
+</html>

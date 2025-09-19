@@ -1,0 +1,5 @@
+{
+  "name": "DiveAI",
+  "description": "An advanced AI-powered application to analyze trading history from uploaded files. It provides deep data insights, correlations, and actionable suggestions to improve trading performance.",
+  "requestFramePermissions": []
+}
