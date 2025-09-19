@@ -9,7 +9,7 @@ services:
   # Git repository configuration
   git:
     branch: main
-    repo_clone_url: ${_self.repository}
+    repo_clone_url: https://github.com/sixscripts-ai/deepdiveai.git
   
   # Build and run commands
   build_command: npm run build
