@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import { readFileSync } from 'fs';
+import { readFileSync, statSync } from 'fs';
 import { join } from 'path';
 import type { UploadedFile, ChatMessage, AnalysisResult } from '../types';
 
@@ -264,8 +264,7 @@ class DatabaseService {
         const dbPath = join(process.cwd(), 'deepdive.db');
         let dbSize = '0 KB';
         try {
-            const fs = require('fs');
-            const stats = fs.statSync(dbPath);
+            const stats = statSync(dbPath);
             const sizeInBytes = stats.size;
             dbSize = sizeInBytes < 1024 ? `${sizeInBytes} B` :
                      sizeInBytes < 1024 * 1024 ? `${(sizeInBytes / 1024).toFixed(1)} KB` :

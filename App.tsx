@@ -270,7 +270,9 @@ const App: React.FC = () => {
         setChatHistory(prev => ({ ...prev, [currentFileId]: finalHistory }));
 
         for await (const chunk of stream) {
-            modelResponse += chunk.text;
+            // Handle the streaming response from Google Generative AI
+            const chunkText = chunk.text ? chunk.text() : (chunk.candidates?.[0]?.content?.parts?.[0]?.text || '');
+            modelResponse += chunkText;
             setChatHistory(prev => {
                 const updatedHistory = [...(prev[currentFileId] || [])];
                 if (updatedHistory.length > 0 && updatedHistory[updatedHistory.length - 1].role === 'model') {

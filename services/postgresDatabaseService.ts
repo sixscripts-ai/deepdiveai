@@ -1,4 +1,4 @@
-import { Pool, PoolClient } from 'pg';
+import { Pool } from 'pg';
 import type { UploadedFile, ChatMessage, AnalysisResult } from '../types';
 
 export interface DatabaseFile extends UploadedFile {

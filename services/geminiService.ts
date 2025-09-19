@@ -1,4 +1,4 @@
-import { GoogleGenAI, GenerateContentResponse, Content } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { UploadedFile, ChatMessage, AnalysisResult } from "../types";
 
 const API_KEY = process.env.GEMINI_API_KEY || process.env.API_KEY;
@@ -7,7 +7,7 @@ if (!API_KEY) {
   throw new Error("GEMINI_API_KEY environment variable not set");
 }
 
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+const ai = new GoogleGenerativeAI(API_KEY);
 
 const PROMPT = `
 You are an expert trading performance analyst AI. Your name is 'DeepDive'. I will provide you with a user's trading data from a file. Your task is to perform a deep analysis and generate a comprehensive performance report.
@@ -76,30 +76,16 @@ export const analyzeTradingData = async (file: UploadedFile): Promise<AnalysisRe
         let contents;
 
         if (file.isBinary) {
-            contents = {
-                parts: [
-                    { text: PROMPT },
-                    {
-                        inlineData: {
-                            mimeType: file.type,
-                            data: file.content,
-                        },
-                    },
-                ],
-            };
+            // For binary files, we'll just use the filename and type info
+            contents = `${PROMPT}\nFile: ${file.name} (${file.type})\nNote: Binary file content cannot be displayed as text.\n---`;
         } else {
             contents = `${PROMPT}\n${file.content}\n---`;
         }
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: contents,
-            config: {
-                responseMimeType: "application/json",
-            }
-        });
+        const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const response = await model.generateContent(contents);
         
-        const rawText = response.text?.trim() || "";
+        const rawText = response.response.text().trim() || "";
         
         try {
             const parsedJson = JSON.parse(rawText);
@@ -133,35 +119,23 @@ export const analyzeTradingData = async (file: UploadedFile): Promise<AnalysisRe
 };
 
 export const continueChatStream = async (
-    file: UploadedFile,
+    _file: UploadedFile, // Prefixed with underscore to indicate unused parameter
     report: string, // This is the markdownReport string
     history: ChatMessage[],
     newMessage: string
-): Promise<AsyncGenerator<GenerateContentResponse>> => {
+): Promise<AsyncGenerator<any>> => {
     try {
-        const initialUserContent = file.isBinary 
-            ? {
-                parts: [
-                    { text: PROMPT },
-                    { inlineData: { mimeType: file.type, data: file.content } },
-                ]
-              }
-            : { parts: [{ text: `${PROMPT}\n${file.content}\n---` }] };
+        const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        
+        // Build conversation history
+        const conversationHistory = [
+            `Context: ${report}`,
+            ...history.map(msg => `${msg.role}: ${msg.text}`),
+            `user: ${newMessage}`
+        ].join('\n\n');
 
-        // For chat, we only need the markdown report for context, not the full JSON object.
-        const historyForAI: Content[] = [
-            { role: 'user', ...initialUserContent },
-            { role: 'model', parts: [{ text: report }] },
-            ...history.map(msg => ({ role: msg.role, parts: [{ text: msg.text }] }))
-        ];
-
-        const chat = ai.chats.create({
-            model: 'gemini-2.5-flash',
-            history: historyForAI,
-        });
-
-        const responseStream = await chat.sendMessageStream({ message: newMessage });
-        return responseStream;
+        const response = await model.generateContentStream(conversationHistory);
+        return response.stream;
 
     } catch (error) {
         console.error("Error calling Gemini Chat API:", error);
