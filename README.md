@@ -47,10 +47,51 @@ If you prefer to run services separately:
 ## Database
 
 This application uses **SQLite** for data persistence:
-
 - **Database file**: `deepdive.db` (created automatically)
 - **Location**: Project root directory
 - **Features**:
+
+## Deployment Documentation
+
+### Deploy to DigitalOcean App Platform
+
+#### Prerequisites
+
+1. A DigitalOcean account
+2. Your code pushed to a Git repository
+3. Gemini API key
+
+#### Deployment Steps
+
+1. Log in to your DigitalOcean account and navigate to the App Platform
+2. Click "Create App" and select your Git repository
+3. Configure the app with the following settings:
+
+##### Build Settings
+- **Build Strategy**: Buildpack
+- **Build Command**: `npm run build`
+- **Run Command**: `npm run dev:full`
+
+##### Network Configuration
+- **Public HTTP Port**: 8080
+
+##### HTTP Routing
+- Configure 1 HTTP request route with path `/`
+
+##### Environment Variables
+- **GEMINI_API_KEY**: Your Gemini API key
+- **NODE_ENV**: production
+- **PORT**: 8080
+
+4. Click "Create Resources" to start the deployment
+5. Once deployed, your application will be accessible via the provided URL
+
+### Additional Deployment Resources
+
+- [DIGITALOCEAN_DEPLOYMENT.md](DIGITALOCEAN_DEPLOYMENT.md) - Detailed deployment configuration
+- [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md) - Step-by-step deployment checklist
+- [TESTING_PROCEDURE.md](TESTING_PROCEDURE.md) - Testing procedures for pre and post deployment
+- [DATABASE_MIGRATION_GUIDE.md](DATABASE_MIGRATION_GUIDE.md) - Database migration strategies for production environments
   - Persistent file storage
   - Analysis results caching
   - Chat history preservation

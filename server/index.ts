@@ -1,11 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import DatabaseService from '../services/databaseService';
+import { getDatabaseService, type IDatabaseService } from '../services/databaseFactory';
 import type { UploadedFile } from '../types';
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
@@ -13,10 +13,10 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Initialize database service
-let db: DatabaseService;
+let db: IDatabaseService;
 
 try {
-    db = DatabaseService.getInstance();
+    db = getDatabaseService();
     console.log('Database service initialized successfully');
 } catch (error) {
     console.error('Failed to initialize database service:', error);
@@ -29,9 +29,9 @@ app.get('/api/health', (_req, res) => {
 });
 
 // Database stats endpoint
-app.get('/api/stats', (_req, res) => {
+app.get('/api/stats', async (_req, res) => {
     try {
-        const stats = db.getStats();
+        const stats = await db.getStats();
         res.json(stats);
     } catch (error) {
         console.error('Error getting database stats:', error);
@@ -40,9 +40,9 @@ app.get('/api/stats', (_req, res) => {
 });
 
 // File endpoints
-app.get('/api/files', (_req, res) => {
+app.get('/api/files', async (_req, res) => {
     try {
-        const files = db.getAllFiles();
+        const files = await db.getAllFiles();
         res.json(files);
     } catch (error) {
         console.error('Error getting files:', error);
@@ -50,9 +50,9 @@ app.get('/api/files', (_req, res) => {
     }
 });
 
-app.get('/api/files/:id', (req, res) => {
+app.get('/api/files/:id', async (req, res) => {
     try {
-        const file = db.getFile(req.params.id);
+        const file = await db.getFile(req.params.id);
         if (!file) {
             return res.status(404).json({ error: 'File not found' });
         }
@@ -63,7 +63,7 @@ app.get('/api/files/:id', (req, res) => {
     }
 });
 
-app.post('/api/files', (req, res) => {
+app.post('/api/files', async (req, res) => {
     try {
         const file: UploadedFile = req.body;
         
@@ -76,7 +76,7 @@ app.post('/api/files', (req, res) => {
             return res.status(400).json({ error: 'File name too long (max 255 characters)' });
         }
         
-        db.insertFile(file);
+        await db.insertFile(file);
         res.status(201).json({ message: 'File uploaded successfully', id: file.id });
     } catch (error) {
         console.error('Error uploading file:', error);
@@ -84,9 +84,9 @@ app.post('/api/files', (req, res) => {
     }
 });
 
-app.delete('/api/files/:id', (req, res) => {
+app.delete('/api/files/:id', async (req, res) => {
     try {
-        db.deleteFile(req.params.id);
+        await db.deleteFile(req.params.id);
         res.json({ message: 'File deleted successfully' });
     } catch (error) {
         console.error('Error deleting file:', error);
@@ -94,9 +94,9 @@ app.delete('/api/files/:id', (req, res) => {
     }
 });
 
-app.put('/api/files/:id/access', (req, res) => {
+app.put('/api/files/:id/access', async (req, res) => {
     try {
-        db.updateFileLastAccessed(req.params.id);
+        await db.updateFileLastAccessed(req.params.id);
         res.json({ message: 'File access updated' });
     } catch (error) {
         console.error('Error updating file access:', error);
@@ -105,9 +105,9 @@ app.put('/api/files/:id/access', (req, res) => {
 });
 
 // Analysis results endpoints
-app.get('/api/analysis', (_req, res) => {
+app.get('/api/analysis', async (_req, res) => {
     try {
-        const results = db.getAllAnalysisResults();
+        const results = await db.getAllAnalysisResults();
         res.json(results);
     } catch (error) {
         console.error('Error getting analysis results:', error);
@@ -115,9 +115,9 @@ app.get('/api/analysis', (_req, res) => {
     }
 });
 
-app.get('/api/analysis/:fileId', (req, res) => {
+app.get('/api/analysis/:fileId', async (req, res) => {
     try {
-        const result = db.getAnalysisResult(req.params.fileId);
+        const result = await db.getAnalysisResult(req.params.fileId);
         if (!result) {
             return res.status(404).json({ error: 'Analysis result not found' });
         }
@@ -128,10 +128,10 @@ app.get('/api/analysis/:fileId', (req, res) => {
     }
 });
 
-app.post('/api/analysis', (req, res) => {
+app.post('/api/analysis', async (req, res) => {
     try {
         const { fileId, result, processingTimeMs } = req.body;
-        const id = db.insertAnalysisResult(fileId, result, processingTimeMs);
+        const id = await db.insertAnalysisResult(fileId, result, processingTimeMs);
         res.status(201).json({ message: 'Analysis result saved', id });
     } catch (error) {
         console.error('Error saving analysis result:', error);
@@ -139,9 +139,9 @@ app.post('/api/analysis', (req, res) => {
     }
 });
 
-app.delete('/api/analysis/:fileId', (req, res) => {
+app.delete('/api/analysis/:fileId', async (req, res) => {
     try {
-        db.deleteAnalysisResults(req.params.fileId);
+        await db.deleteAnalysisResults(req.params.fileId);
         res.json({ message: 'Analysis results deleted' });
     } catch (error) {
         console.error('Error deleting analysis results:', error);
@@ -150,9 +150,9 @@ app.delete('/api/analysis/:fileId', (req, res) => {
 });
 
 // Chat history endpoints
-app.get('/api/chat', (_req, res) => {
+app.get('/api/chat', async (_req, res) => {
     try {
-        const chatHistory = db.getAllChatHistory();
+        const chatHistory = await db.getAllChatHistory();
         res.json(chatHistory);
     } catch (error) {
         console.error('Error getting chat history:', error);
@@ -160,9 +160,9 @@ app.get('/api/chat', (_req, res) => {
     }
 });
 
-app.get('/api/chat/:fileId', (req, res) => {
+app.get('/api/chat/:fileId', async (req, res) => {
     try {
-        const messages = db.getChatHistory(req.params.fileId);
+        const messages = await db.getChatHistory(req.params.fileId);
         res.json(messages);
     } catch (error) {
         console.error('Error getting chat history:', error);
@@ -170,10 +170,10 @@ app.get('/api/chat/:fileId', (req, res) => {
     }
 });
 
-app.post('/api/chat/:fileId', (req, res) => {
+app.post('/api/chat/:fileId', async (req, res) => {
     try {
         const { messages } = req.body;
-        db.setChatHistory(req.params.fileId, messages);
+        await db.setChatHistory(req.params.fileId, messages);
         res.json({ message: 'Chat history updated' });
     } catch (error) {
         console.error('Error updating chat history:', error);
@@ -181,9 +181,9 @@ app.post('/api/chat/:fileId', (req, res) => {
     }
 });
 
-app.delete('/api/chat/:fileId', (req, res) => {
+app.delete('/api/chat/:fileId', async (req, res) => {
     try {
-        db.deleteChatHistory(req.params.fileId);
+        await db.deleteChatHistory(req.params.fileId);
         res.json({ message: 'Chat history deleted' });
     } catch (error) {
         console.error('Error deleting chat history:', error);
@@ -192,11 +192,11 @@ app.delete('/api/chat/:fileId', (req, res) => {
 });
 
 // Backup endpoint
-app.post('/api/backup', (req, res) => {
+app.post('/api/backup', async (req, res) => {
     try {
         const { backupPath } = req.body;
         const defaultPath = path.join(process.cwd(), `backup-${Date.now()}.db`);
-        db.backup(backupPath || defaultPath);
+        await db.backup(backupPath || defaultPath);
         res.json({ message: 'Database backup created', path: backupPath || defaultPath });
     } catch (error) {
         console.error('Error creating backup:', error);
@@ -225,14 +225,14 @@ app.listen(PORT, () => {
 });
 
 // Graceful shutdown
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
     console.log('\nShutting down server...');
-    db.close();
+    await db.close();
     process.exit(0);
 });
 
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
     console.log('\nShutting down server...');
-    db.close();
+    await db.close();
     process.exit(0);
 });

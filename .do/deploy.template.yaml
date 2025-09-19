@@ -1,0 +1,58 @@
+name: deepdiveai
+# DeepDive AI - DigitalOcean App Platform Deployment Configuration
+
+# Deployment region
+region: nyc
+
+services:
+- name: web
+  # Git repository configuration
+  git:
+    branch: main
+    repo_clone_url: ${_self.repository}
+  
+  # Build and run commands
+  build_command: npm run build
+  run_command: npm run dev:full
+  
+  # Port configuration
+  http_port: 8080
+  
+  # Route configuration
+  routes:
+  - path: /
+  
+  # Environment variables
+  envs:
+  - key: GEMINI_API_KEY
+    scope: RUN_TIME
+    value: ${GEMINI_API_KEY}
+  - key: NODE_ENV
+    scope: RUN_TIME
+    value: production
+  - key: PORT
+    scope: RUN_TIME
+    value: "8080"
+  # PostgreSQL Database Configuration
+  # Set DATABASE_URL to enable PostgreSQL (otherwise uses SQLite locally)
+  - key: DATABASE_URL
+    scope: RUN_TIME
+    value: ${DATABASE_URL}
+  - key: PGSSL
+    scope: RUN_TIME
+    value: "true"
+
+# Database Configuration Notes:
+# 
+# PRODUCTION (Recommended): Use DigitalOcean Managed PostgreSQL
+# - Create a PostgreSQL database cluster in DigitalOcean
+# - Set DATABASE_URL environment variable to the connection string
+# - Application will automatically use PostgreSQL when DATABASE_URL is set
+# 
+# DEVELOPMENT: Uses SQLite automatically when DATABASE_URL is not set
+# 
+# Migration: Use migrate_to_postgresql.cjs to transfer data from SQLite to PostgreSQL
+# See MIGRATION_README.md for detailed instructions
+#
+# IMPORTANT: SQLite data will NOT persist on DigitalOcean App Platform
+# due to ephemeral filesystem. PostgreSQL is required for production.

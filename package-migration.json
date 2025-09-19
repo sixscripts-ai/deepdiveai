@@ -1,0 +1,27 @@
+{
+  "name": "deepdiveai-migration",
+  "version": "1.0.0",
+  "description": "PostgreSQL migration script for DeepDiveAI SQLite database",
+  "main": "migrate_to_postgresql.cjs",
+  "scripts": {
+    "migrate": "node migrate_to_postgresql.cjs",
+    "install-deps": "npm install better-sqlite3 pg",
+    "test-migration": "node test_migration.cjs"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.2.2",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.10.9"
+  },
+  "keywords": [
+    "postgresql",
+    "sqlite",
+    "migration",
+    "database",
+    "deepdiveai"
+  ],
+  "author": "DeepDiveAI Team",
+  "license": "MIT"
+}
